@@ -3,9 +3,11 @@ import { FormSelect } from "@/components/custom/form/FormSelect";
 import { SimpleDialog } from "@/components/custom/SimpleDialog";
 import { Button } from "@/components/ui/button";
 import { tableService } from "@/services/tables.service";
+import { ApiErrorResponse } from "@/types/api.type";
 import { BilliardTable } from "@/types/table.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const updateTableSchema = z.object({
@@ -42,8 +44,10 @@ const DialogUpdateTable = ({
       await tableService.update(table.id, data);
       onSuccess();
       setIsOpen(false);
+      toast.success("Cập nhật bàn thành công!");
     } catch (error) {
-      console.log(error);
+      const err = error as ApiErrorResponse;
+      toast.error(err.message);
     }
   };
 

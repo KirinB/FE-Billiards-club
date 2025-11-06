@@ -4,6 +4,8 @@ export const BREADCRUMB_LABELS: Record<string, string> = {
   manage: "Điều chỉnh",
   staff: "Nhân viên",
   menu: "Thực đơn",
+  category: "Danh mục món ăn",
+  "menu-item": "Món ăn",
   settings: "Cài đặt",
   pos: "POS",
   orders: "Đơn hàng",

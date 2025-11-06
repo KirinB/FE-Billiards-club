@@ -20,80 +20,80 @@ import DialogCreateTable from "@/components/Dashboard/Tables/DialogCreateTable";
 import { useTableColumns } from "./columns";
 
 // Mock API
-const mockApi = async ({
-  page,
-  pageSize,
-  search,
-  priceSort,
-  type,
-}: {
-  page: number;
-  pageSize: number;
-  search: string;
-  priceSort: "asc" | "desc";
-  type: string;
-}) => {
-  const mockData: BilliardTable[] = [
-    {
-      id: 1,
-      name: "Bàn VIP 1",
-      type: "CAROM",
-      pricePerHour: 70000,
-      status: "AVAILABLE",
-      createdAt: "2025-11-01T06:24:32.644Z",
-    },
-    {
-      id: 2,
-      name: "Bàn Pool 1",
-      type: "POOL",
-      pricePerHour: 50000,
-      status: "OCCUPIED",
-      createdAt: "2025-11-02T08:24:32.644Z",
-    },
-    {
-      id: 3,
-      name: "Bàn VIP 2",
-      type: "CAROM",
-      pricePerHour: 80000,
-      status: "AVAILABLE",
-      createdAt: "2025-11-03T10:24:32.644Z",
-    },
-  ];
+// const mockApi = async ({
+//   page,
+//   pageSize,
+//   search,
+//   priceSort,
+//   type,
+// }: {
+//   page: number;
+//   pageSize: number;
+//   search: string;
+//   priceSort: "asc" | "desc";
+//   type: string;
+// }) => {
+//   const mockData: BilliardTable[] = [
+//     {
+//       id: 1,
+//       name: "Bàn VIP 1",
+//       type: "CAROM",
+//       pricePerHour: 70000,
+//       status: "AVAILABLE",
+//       createdAt: "2025-11-01T06:24:32.644Z",
+//     },
+//     {
+//       id: 2,
+//       name: "Bàn Pool 1",
+//       type: "POOL",
+//       pricePerHour: 50000,
+//       status: "OCCUPIED",
+//       createdAt: "2025-11-02T08:24:32.644Z",
+//     },
+//     {
+//       id: 3,
+//       name: "Bàn VIP 2",
+//       type: "CAROM",
+//       pricePerHour: 80000,
+//       status: "AVAILABLE",
+//       createdAt: "2025-11-03T10:24:32.644Z",
+//     },
+//   ];
 
-  // Lọc search
-  let filtered = mockData.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
+//   // Lọc search
+//   let filtered = mockData.filter((item) =>
+//     item.name.toLowerCase().includes(search.toLowerCase())
+//   );
 
-  // Lọc type
-  if (type && type !== "all")
-    filtered = filtered.filter((item) => item.type === type);
+//   // Lọc type
+//   if (type && type !== "all")
+//     filtered = filtered.filter((item) => item.type === type);
 
-  // Sort
-  filtered.sort((a, b) =>
-    priceSort === "asc"
-      ? a.pricePerHour - b.pricePerHour
-      : b.pricePerHour - a.pricePerHour
-  );
+//   // Sort
+//   filtered.sort((a, b) =>
+//     priceSort === "asc"
+//       ? a.pricePerHour - b.pricePerHour
+//       : b.pricePerHour - a.pricePerHour
+//   );
 
-  // Pagination
-  const total = filtered.length;
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
-  const tables = filtered.slice(start, end);
+//   // Pagination
+//   const total = filtered.length;
+//   const start = (page - 1) * pageSize;
+//   const end = start + pageSize;
+//   const tables = filtered.slice(start, end);
 
-  return {
-    success: true,
-    message: "Fetched successfully",
-    metaData: {
-      tables,
-      total,
-      page,
-      pageSize,
-      totalPage: Math.ceil(total / pageSize),
-    },
-  };
-};
+//   return {
+//     success: true,
+//     message: "Fetched successfully",
+//     metaData: {
+//       tables,
+//       total,
+//       page,
+//       pageSize,
+//       totalPage: Math.ceil(total / pageSize),
+//     },
+//   };
+// };
 
 export default function TableModule() {
   const [data, setData] = useState<BilliardTable[]>([]);
@@ -108,6 +108,7 @@ export default function TableModule() {
   const [total, setTotal] = useState(0);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const { metaData } = await tableService.getList({
         page,
@@ -118,21 +119,18 @@ export default function TableModule() {
       });
 
       setData(metaData.tables);
-      setLoading(false);
+
       setTotal(metaData.total);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const { Dialogs, columns } = useTableColumns(fetchData);
+  const { DialogsUpdate, DialogsDelete, columns } = useTableColumns(fetchData);
 
   useEffect(() => {
-    // mockApi({ page, pageSize, search, priceSort, type }).then((res) => {
-    //   setData(res.metaData.tables);
-    //   setTotal(res.metaData.total);
-    //   setLoading(false);
-    // });
     fetchData();
   }, [page, pageSize, search, priceSort, type]);
 
@@ -140,7 +138,7 @@ export default function TableModule() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Quản lý bàn billiards</h1>
+      <h1 className="text-2xl font-semibold">🎱 Quản lý bàn billiards</h1>
 
       {/* Toolbar */}
       <div className="flex justify-between">
@@ -155,10 +153,7 @@ export default function TableModule() {
             className="w-[200px]"
           />
 
-          <Select
-            onValueChange={(v) => setType(v as TableType)}
-            defaultValue="ALL"
-          >
+          <Select onValueChange={(v) => setType(v as TableType)} value={type}>
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Loại bàn" />
             </SelectTrigger>
@@ -199,7 +194,8 @@ export default function TableModule() {
         pageSize={pageSize}
         onPageChange={setPage}
       />
-      {Dialogs}
+      {DialogsUpdate}
+      {DialogsDelete}
     </div>
   );
 }

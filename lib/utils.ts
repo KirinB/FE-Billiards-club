@@ -19,3 +19,11 @@ export const removeLeadingZero = (value: string) => {
 
   return Number(value);
 };
+
+export const formatCurrencyVND = (value: number) => {
+  return value.toLocaleString("vi-VN") + "₫";
+};
+
+export const formatDateVn = (value: string) => {
+  return new Date(value).toLocaleDateString("vi-VN");
+};

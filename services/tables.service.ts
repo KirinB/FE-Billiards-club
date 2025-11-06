@@ -7,7 +7,7 @@ import {
   TableType,
 } from "@/types/table.type";
 import { privateClient } from "./apiClient";
-import { ApiResponse, SortOrder } from "@/types/api.type";
+import { ApiResponse, ApiResponseDeleted, SortOrder } from "@/types/api.type";
 
 const API_URL = "/tables";
 
@@ -54,5 +54,13 @@ export const tableService = {
     >(`${API_URL}/${id}`, payload);
 
     return data.metaData;
+  },
+
+  delete: async (id: number): Promise<ApiResponseDeleted> => {
+    const { data } = await privateClient.delete<ApiResponseDeleted>(
+      `${API_URL}/${id}`
+    );
+
+    return data;
   },
 };

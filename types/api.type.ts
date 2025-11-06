@@ -6,9 +6,15 @@ export interface ApiResponse<T> {
 
 export type SortOrder = "asc" | "desc";
 
-// export interface ErrorResponse {
-//   error: string;
-//   errorCode: string;
-//   statusCode: number;
-//   success: boolean;
-// }
+export interface ApiErrorResponse {
+  success: false;
+  statusCode: number;
+  message: string;
+  path: string;
+  timestamp: string;
+}
+
+export interface ApiResponseDeleted {
+  success: boolean;
+  message: string;
+}

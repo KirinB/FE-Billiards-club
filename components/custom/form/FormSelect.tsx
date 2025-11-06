@@ -18,7 +18,7 @@ import { useFormContext } from "react-hook-form";
 
 interface Option {
   label: string;
-  value: string;
+  value: string | number | boolean;
 }
 
 interface FormSelectProps {
@@ -44,13 +44,25 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         <FormItem>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={(value) => {
+                const selected = options.find(
+                  (opt) => String(opt.value) === value
+                );
+                field.onChange(selected ? selected.value : undefined);
+              }}
+              value={
+                field.value !== undefined && field.value !== null
+                  ? String(field.value)
+                  : ""
+              }
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent>
                 {options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
+                  <SelectItem key={String(opt.value)} value={String(opt.value)}>
                     {opt.label}
                   </SelectItem>
                 ))}

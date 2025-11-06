@@ -13,10 +13,7 @@ export const NAV_CONFIG = {
       title: "Bàn bida",
       icon: SquareTerminal,
       url: "/dashboard/tables",
-      items: [
-        { title: "Danh sách bàn", url: "/dashboard/tables" },
-        { title: "Điều chỉnh bàn", url: "/dashboard/tables/manage" },
-      ],
+      items: [{ title: "Quản lý bàn", url: "/dashboard/tables" }],
     },
     {
       title: "Nhân viên",
@@ -28,7 +25,11 @@ export const NAV_CONFIG = {
       title: "Thực đơn",
       icon: BookOpen,
       url: "/dashboard/menu",
-      items: [{ title: "Quản lý thực đơn", url: "/dashboard/menu" }],
+      items: [
+        { title: "Quản lý thực đơn", url: "/dashboard/menu" },
+        { title: "Quản lý danh mục món ăn", url: "/dashboard/category" },
+        { title: "Quản lý món ăn", url: "/dashboard/menu-item" },
+      ],
     },
     {
       title: "Cài đặt app",

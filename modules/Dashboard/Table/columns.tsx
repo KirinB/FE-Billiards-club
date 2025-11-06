@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { BilliardTable } from "@/types/table.type";
 import { useState } from "react";
 import DialogUpdateTable from "@/components/Dashboard/Tables/DialogUpdateTable";
+import DialogDeleteTable from "@/components/Dashboard/Tables/DialogDeleteTable";
 
 export const useTableColumns = (onSuccess: () => void) => {
   // State dùng chung cho dialog
@@ -22,6 +23,9 @@ export const useTableColumns = (onSuccess: () => void) => {
   const [selectedTable, setSelectedTable] = useState<BilliardTable | null>(
     null
   );
+  const [selectedTableDelete, setSelectedTableDelete] =
+    useState<BilliardTable | null>(null);
+  const [isOpenDeleteTable, setIsOpenDeleteTable] = useState<boolean>(false);
 
   const columns: ColumnDef<BilliardTable>[] = [
     { accessorKey: "id", header: "ID" },
@@ -93,7 +97,10 @@ export const useTableColumns = (onSuccess: () => void) => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => alert(`Delete table ${table.id}`)}
+                onClick={() => {
+                  setSelectedTableDelete(table);
+                  setIsOpenDeleteTable(true);
+                }}
                 className="text-red-500 hover:text-red-600!"
               >
                 Delete table
@@ -105,8 +112,7 @@ export const useTableColumns = (onSuccess: () => void) => {
     },
   ];
 
-  // Render dialog bên ngoài để không bị unmount khi dropdown đóng
-  const Dialogs = selectedTable ? (
+  const DialogsUpdate = selectedTable ? (
     <DialogUpdateTable
       isOpen={isOpenUpdateTable}
       setIsOpen={setIsOpenUpdateTable}
@@ -115,5 +121,14 @@ export const useTableColumns = (onSuccess: () => void) => {
     />
   ) : null;
 
-  return { columns, Dialogs };
+  const DialogsDelete = selectedTableDelete ? (
+    <DialogDeleteTable
+      isOpen={isOpenDeleteTable}
+      onSuccess={onSuccess}
+      table={selectedTableDelete}
+      setIsOpen={setIsOpenDeleteTable}
+    />
+  ) : null;
+
+  return { columns, DialogsUpdate, DialogsDelete };
 };

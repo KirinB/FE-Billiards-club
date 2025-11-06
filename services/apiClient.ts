@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types/api.type";
+import { ApiErrorResponse, ApiResponse } from "@/types/api.type";
 import { ResponseLogin } from "@/types/auth.type";
 import axios from "axios";
 
@@ -81,6 +81,15 @@ privateClient.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    const standardizedError: ApiErrorResponse = {
+      success: false,
+      statusCode: error.response?.status || 0,
+      message:
+        error.response?.data?.message || error.message || "Unknown error",
+      path: error.config?.url || "",
+      timestamp: new Date().toISOString(),
+    };
+
+    return Promise.reject(standardizedError);
   }
 );

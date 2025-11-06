@@ -7,71 +7,57 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-// Giả định các dialog component của bạn
-import DialogUpdateUser from "@/components/Dashboard/Users/DialogUpdateUser";
-import DialogDeleteUser from "@/components/Dashboard/Users/DialogDeleteUser";
-import { User } from "@/types/user.type";
-import { Badge } from "@/components/ui/badge";
+import { Menu } from "@/types/menu.type";
+import DialogUpdateMenu from "@/components/Dashboard/Menu/DialogUpdateMenu";
+import DialogDeleteMenu from "@/components/Dashboard/Menu/DialogDeleteMenu";
 
 type ActionType = "UPDATE" | "DELETE" | null;
 
-export const useStaffColumns = (onSuccess: () => void) => {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
+export const useMenuColumns = (onSuccess: () => void) => {
+  const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
   const [openAction, setOpenAction] = useState<ActionType>(null);
 
-  // Hàm đóng dialog chung, reset cả action và user
+  // Hàm đóng dialog chung, reset cả action và menu
   const closeDialog = () => {
     setOpenAction(null);
-    setSelectedUser(null);
+    setSelectedMenu(null);
   };
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<Menu>[] = [
     { accessorKey: "id", header: "ID" },
-    { accessorKey: "name", header: "Tên" },
-    { accessorKey: "email", header: "Email" },
-    { accessorKey: "username", header: "Tên đăng nhập" },
+    { accessorKey: "name", header: "Tên Menu" },
     {
-      accessorKey: "role",
-      header: "Role",
+      accessorKey: "menuItems",
+      header: "Số lượng món",
       cell: ({ row }) => {
-        const status = row.getValue("role") as string;
-        let variant: "default" | "secondary" | "active" | "destructive" =
-          "secondary";
-        let text = status;
-
-        switch (status) {
-          case "STAFF":
-            variant = "active";
-            text = "Nhân viên";
-            break;
-          case "ADMIN":
-            variant = "destructive";
-            text = "Quản trị viên";
-            break;
-        }
-        return (
-          <Badge variant={variant} className="capitalize">
-            {text}
-          </Badge>
-        );
+        const items = row.original.menuItems;
+        return items ? items.length : 0;
       },
     },
     {
       accessorKey: "createdAt",
       header: "Ngày tạo",
       cell: ({ row }) =>
-        new Date(row.getValue("createdAt")).toLocaleDateString("vi-VN"),
+        new Date(row.getValue("createdAt") as string).toLocaleDateString(
+          "vi-VN"
+        ),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Cập nhật lần cuối",
+      cell: ({ row }) =>
+        new Date(row.getValue("updatedAt") as string).toLocaleDateString(
+          "vi-VN"
+        ),
     },
     {
       id: "actions",
       header: "Hành động",
       cell: ({ row }) => {
-        const user = row.original;
+        const menu = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -85,22 +71,21 @@ export const useStaffColumns = (onSuccess: () => void) => {
               {/* HÀNH ĐỘNG CẬP NHẬT */}
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedMenu(menu);
                   setOpenAction("UPDATE");
                 }}
               >
-                Edit user
+                Chỉnh sửa Menu
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
               {/* HÀNH ĐỘNG XÓA */}
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedMenu(menu);
                   setOpenAction("DELETE");
                 }}
                 className="text-red-500 focus:text-red-600"
               >
-                Delete user
+                Xóa Menu
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -109,12 +94,10 @@ export const useStaffColumns = (onSuccess: () => void) => {
     },
   ];
 
-  // Logic render Dialogs: Chỉ render nếu có user được chọn
-  const Dialogs = selectedUser ? (
+  const Dialogs = selectedMenu ? (
     <>
-      {/* Dialog Cập nhật */}
-      <DialogUpdateUser
-        user={selectedUser}
+      <DialogUpdateMenu
+        menu={selectedMenu}
         isOpen={openAction === "UPDATE"}
         setIsOpen={(open) => {
           if (!open) closeDialog();
@@ -124,9 +107,8 @@ export const useStaffColumns = (onSuccess: () => void) => {
           onSuccess();
         }}
       />
-      {/* Dialog Xóa */}
-      <DialogDeleteUser
-        user={selectedUser}
+      <DialogDeleteMenu
+        menu={selectedMenu}
         isOpen={openAction === "DELETE"}
         setIsOpen={(open) => {
           if (!open) closeDialog();

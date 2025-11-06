@@ -1,5 +1,7 @@
 export const MESSAGES = {
   VALIDATION: {
+    NAME_LENGTH: "Tên không dưới 3 ký tự",
+    USER_NAME_LENGTH: "Tài khoản không dưới 3 ký tự",
     REQUIRED: "This field is required.",
     USERNAME_OR_EMAIL_LENGTH: "Tên đăng nhập hoặc email phải hơn 3 ký tự",
     INVALID_FORMAT: "Invalid format.",

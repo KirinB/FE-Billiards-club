@@ -1,3 +1,4 @@
+// @/app/dashboard/menu-item/columns.tsx
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
@@ -7,71 +8,64 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-// Giả định các dialog component của bạn
-import DialogUpdateUser from "@/components/Dashboard/Users/DialogUpdateUser";
-import DialogDeleteUser from "@/components/Dashboard/Users/DialogDeleteUser";
-import { User } from "@/types/user.type";
+import { MenuItem } from "@/types/menu-item.type"; // Import type MenuItem mới
 import { Badge } from "@/components/ui/badge";
+import { formatCurrencyVND, formatDateVn } from "@/lib/utils"; // Giả định hàm format tiền tệ đã có
+import DialogDeleteMenuItem from "@/components/Dashboard/menu-item/DialogDeleteMenuItem";
+import DialogUpdateMenuItem from "@/components/Dashboard/menu-item/DialogUpdateMenuItem";
 
 type ActionType = "UPDATE" | "DELETE" | null;
 
-export const useStaffColumns = (onSuccess: () => void) => {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
+export const useMenuItemColumns = (onSuccess: () => void) => {
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [openAction, setOpenAction] = useState<ActionType>(null);
 
-  // Hàm đóng dialog chung, reset cả action và user
   const closeDialog = () => {
     setOpenAction(null);
-    setSelectedUser(null);
+    setSelectedItem(null);
   };
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<MenuItem>[] = [
     { accessorKey: "id", header: "ID" },
-    { accessorKey: "name", header: "Tên" },
-    { accessorKey: "email", header: "Email" },
-    { accessorKey: "username", header: "Tên đăng nhập" },
+    { accessorKey: "name", header: "Tên Món" },
     {
-      accessorKey: "role",
-      header: "Role",
+      accessorKey: "category",
+      header: "Danh mục",
       cell: ({ row }) => {
-        const status = row.getValue("role") as string;
-        let variant: "default" | "secondary" | "active" | "destructive" =
-          "secondary";
-        let text = status;
-
-        switch (status) {
-          case "STAFF":
-            variant = "active";
-            text = "Nhân viên";
-            break;
-          case "ADMIN":
-            variant = "destructive";
-            text = "Quản trị viên";
-            break;
-        }
-        return (
-          <Badge variant={variant} className="capitalize">
-            {text}
-          </Badge>
-        );
+        const item = row.original;
+        // Hiển thị tên danh mục hoặc "Chưa phân loại"
+        return item.category?.name || "Chưa phân loại";
+      },
+    },
+    {
+      accessorKey: "price",
+      header: "Giá",
+      cell: ({ row }) => formatCurrencyVND(row.getValue("price") as number),
+    },
+    {
+      accessorKey: "available",
+      header: "Trạng thái",
+      cell: ({ row }) => {
+        const isAvailable = row.getValue("available") as boolean;
+        const text = isAvailable ? "Sẵn có" : "Hết hàng";
+        const variant: "default" | "secondary" | "active" | "destructive" =
+          isAvailable ? "active" : "destructive";
+        return <Badge variant={variant}>{text}</Badge>;
       },
     },
     {
       accessorKey: "createdAt",
       header: "Ngày tạo",
-      cell: ({ row }) =>
-        new Date(row.getValue("createdAt")).toLocaleDateString("vi-VN"),
+      cell: ({ row }) => formatDateVn(row.getValue("createdAt")),
     },
     {
       id: "actions",
       header: "Hành động",
       cell: ({ row }) => {
-        const user = row.original;
+        const item = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -85,22 +79,20 @@ export const useStaffColumns = (onSuccess: () => void) => {
               {/* HÀNH ĐỘNG CẬP NHẬT */}
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedItem(item);
                   setOpenAction("UPDATE");
                 }}
               >
-                Edit user
+                Chỉnh sửa Món
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {/* HÀNH ĐỘNG XÓA */}
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedItem(item);
                   setOpenAction("DELETE");
                 }}
                 className="text-red-500 focus:text-red-600"
               >
-                Delete user
+                Xóa Món
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -109,13 +101,13 @@ export const useStaffColumns = (onSuccess: () => void) => {
     },
   ];
 
-  // Logic render Dialogs: Chỉ render nếu có user được chọn
-  const Dialogs = selectedUser ? (
+  // Giả định Dialogs tương tự như MenuModule
+  const Dialogs = selectedItem ? (
     <>
-      {/* Dialog Cập nhật */}
-      <DialogUpdateUser
-        user={selectedUser}
-        isOpen={openAction === "UPDATE"}
+      {/* DialogUpdateMenuItem, DialogDeleteMenuItem */}
+      <DialogDeleteMenuItem
+        menuItem={selectedItem}
+        isOpen={openAction === "DELETE"}
         setIsOpen={(open) => {
           if (!open) closeDialog();
         }}
@@ -124,10 +116,9 @@ export const useStaffColumns = (onSuccess: () => void) => {
           onSuccess();
         }}
       />
-      {/* Dialog Xóa */}
-      <DialogDeleteUser
-        user={selectedUser}
-        isOpen={openAction === "DELETE"}
+      <DialogUpdateMenuItem
+        menuItem={selectedItem}
+        isOpen={openAction === "UPDATE"}
         setIsOpen={(open) => {
           if (!open) closeDialog();
         }}
