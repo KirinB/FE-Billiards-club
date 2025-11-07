@@ -1,3 +1,5 @@
+import { Session } from "./session.type";
+
 export type TableType = "POOL" | "CAROM" | "ALL";
 
 export type BilliardTable = {
@@ -5,9 +7,12 @@ export type BilliardTable = {
   name: string;
   type: "POOL" | "CAROM";
   pricePerHour: number;
-  status: string;
+  status: TableStatus;
   createdAt: string;
+  currentSession?: Session | null;
 };
+
+export type TableStatus = "AVAILABLE" | "PLAYING" | "RESERVED";
 
 export type ResponseGetTable = {
   tables: BilliardTable[];
@@ -32,3 +37,7 @@ export interface PayloadUpdateTable extends PayloadCreateTable {}
 export interface ResponseUpdateTable {
   table: BilliardTable;
 }
+
+export type TablesWithoutPaginationResponse = {
+  tables: BilliardTable[];
+};

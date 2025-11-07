@@ -1,7 +1,12 @@
-import React from "react";
+"use client";
+import TableList from "@/components/POS/TableList";
 
 const PosModule = () => {
-  return <div>PosModule</div>;
+  return (
+    <div>
+      <TableList />
+    </div>
+  );
 };
 
 export default PosModule;

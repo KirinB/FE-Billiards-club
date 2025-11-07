@@ -4,6 +4,7 @@ import {
   ResponseCreateTable,
   ResponseGetTable,
   ResponseUpdateTable,
+  TablesWithoutPaginationResponse,
   TableType,
 } from "@/types/table.type";
 import { privateClient } from "./apiClient";
@@ -63,4 +64,12 @@ export const tableService = {
 
     return data;
   },
+
+  getListWithoutPagination:
+    async (): Promise<TablesWithoutPaginationResponse> => {
+      const { data } = await privateClient.get<
+        ApiResponse<TablesWithoutPaginationResponse>
+      >(`${API_URL}/all`);
+      return data.metaData;
+    },
 };

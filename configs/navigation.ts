@@ -5,6 +5,7 @@ import {
   Settings2,
   Columns3,
   LayoutDashboardIcon,
+  Receipt,
 } from "lucide-react";
 
 export const NAV_CONFIG = {
@@ -30,6 +31,12 @@ export const NAV_CONFIG = {
         { title: "Quản lý danh mục món ăn", url: "/dashboard/category" },
         { title: "Quản lý món ăn", url: "/dashboard/menu-item" },
       ],
+    },
+    {
+      title: "Hóa đơn",
+      icon: Receipt,
+      url: "/dashboard/bill",
+      items: [{ title: "Quản lý hóa đơn", url: "/dashboard/bill" }],
     },
     {
       title: "Cài đặt app",

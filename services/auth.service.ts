@@ -14,7 +14,7 @@ export const authService = {
   },
 
   signOut: async () => {
-    const { data } = await privateClient.get(`${BASE_URL}/signout`);
+    const { data } = await privateClient.post(`${BASE_URL}/signout`);
     return data;
   },
 };
