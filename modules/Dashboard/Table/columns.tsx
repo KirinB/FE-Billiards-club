@@ -11,21 +11,25 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { BilliardTable } from "@/types/table.type";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+
 import DialogUpdateTable from "@/components/Dashboard/Tables/DialogUpdateTable";
 import DialogDeleteTable from "@/components/Dashboard/Tables/DialogDeleteTable";
+import { BilliardTable } from "@/types/table.type";
+
+type ActionType = "UPDATE" | "DELETE" | null;
 
 export const useTableColumns = (onSuccess: () => void) => {
-  // State dùng chung cho dialog
-  const [isOpenUpdateTable, setIsOpenUpdateTable] = useState<boolean>(false);
   const [selectedTable, setSelectedTable] = useState<BilliardTable | null>(
     null
   );
-  const [selectedTableDelete, setSelectedTableDelete] =
-    useState<BilliardTable | null>(null);
-  const [isOpenDeleteTable, setIsOpenDeleteTable] = useState<boolean>(false);
+  const [openAction, setOpenAction] = useState<ActionType>(null);
+
+  const closeDialog = () => {
+    setOpenAction(null);
+    setSelectedTable(null);
+  };
 
   const columns: ColumnDef<BilliardTable>[] = [
     { accessorKey: "id", header: "ID" },
@@ -90,7 +94,7 @@ export const useTableColumns = (onSuccess: () => void) => {
               <DropdownMenuItem
                 onClick={() => {
                   setSelectedTable(table);
-                  setIsOpenUpdateTable(true);
+                  setOpenAction("UPDATE");
                 }}
               >
                 Cập nhật bàn
@@ -98,10 +102,10 @@ export const useTableColumns = (onSuccess: () => void) => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedTableDelete(table);
-                  setIsOpenDeleteTable(true);
+                  setSelectedTable(table);
+                  setOpenAction("DELETE");
                 }}
-                className="text-red-500 hover:text-red-600!"
+                className="text-red-500 focus:text-red-600"
               >
                 Delete table
               </DropdownMenuItem>
@@ -112,23 +116,32 @@ export const useTableColumns = (onSuccess: () => void) => {
     },
   ];
 
-  const DialogsUpdate = selectedTable ? (
-    <DialogUpdateTable
-      isOpen={isOpenUpdateTable}
-      setIsOpen={setIsOpenUpdateTable}
-      table={selectedTable}
-      onSuccess={onSuccess}
-    />
+  const Dialogs = selectedTable ? (
+    <>
+      <DialogUpdateTable
+        table={selectedTable}
+        isOpen={openAction === "UPDATE"}
+        setIsOpen={(open) => {
+          if (!open) closeDialog();
+        }}
+        onSuccess={() => {
+          closeDialog();
+          onSuccess();
+        }}
+      />
+      <DialogDeleteTable
+        table={selectedTable}
+        isOpen={openAction === "DELETE"}
+        setIsOpen={(open) => {
+          if (!open) closeDialog();
+        }}
+        onSuccess={() => {
+          closeDialog();
+          onSuccess();
+        }}
+      />
+    </>
   ) : null;
 
-  const DialogsDelete = selectedTableDelete ? (
-    <DialogDeleteTable
-      isOpen={isOpenDeleteTable}
-      onSuccess={onSuccess}
-      table={selectedTableDelete}
-      setIsOpen={setIsOpenDeleteTable}
-    />
-  ) : null;
-
-  return { columns, DialogsUpdate, DialogsDelete };
+  return { columns, Dialogs };
 };

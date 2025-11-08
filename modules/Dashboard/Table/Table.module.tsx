@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import DialogCreateTable from "@/components/Dashboard/Tables/DialogCreateTable";
 import { DataTable } from "@/components/data-table";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,90 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { DataTableSkeleton } from "@/components/data-table-skeleton";
-import { BilliardTable, TableType } from "@/types/table.type";
 import { tableService } from "@/services/tables.service";
 import { SortOrder } from "@/types/api.type";
-import { SimpleDialog } from "@/components/custom/SimpleDialog";
-import DialogCreateTable from "@/components/Dashboard/Tables/DialogCreateTable";
+import { BilliardTable, TableType } from "@/types/table.type";
+import { useEffect, useState } from "react";
 import { useTableColumns } from "./columns";
-
-// Mock API
-// const mockApi = async ({
-//   page,
-//   pageSize,
-//   search,
-//   priceSort,
-//   type,
-// }: {
-//   page: number;
-//   pageSize: number;
-//   search: string;
-//   priceSort: "asc" | "desc";
-//   type: string;
-// }) => {
-//   const mockData: BilliardTable[] = [
-//     {
-//       id: 1,
-//       name: "Bàn VIP 1",
-//       type: "CAROM",
-//       pricePerHour: 70000,
-//       status: "AVAILABLE",
-//       createdAt: "2025-11-01T06:24:32.644Z",
-//     },
-//     {
-//       id: 2,
-//       name: "Bàn Pool 1",
-//       type: "POOL",
-//       pricePerHour: 50000,
-//       status: "OCCUPIED",
-//       createdAt: "2025-11-02T08:24:32.644Z",
-//     },
-//     {
-//       id: 3,
-//       name: "Bàn VIP 2",
-//       type: "CAROM",
-//       pricePerHour: 80000,
-//       status: "AVAILABLE",
-//       createdAt: "2025-11-03T10:24:32.644Z",
-//     },
-//   ];
-
-//   // Lọc search
-//   let filtered = mockData.filter((item) =>
-//     item.name.toLowerCase().includes(search.toLowerCase())
-//   );
-
-//   // Lọc type
-//   if (type && type !== "all")
-//     filtered = filtered.filter((item) => item.type === type);
-
-//   // Sort
-//   filtered.sort((a, b) =>
-//     priceSort === "asc"
-//       ? a.pricePerHour - b.pricePerHour
-//       : b.pricePerHour - a.pricePerHour
-//   );
-
-//   // Pagination
-//   const total = filtered.length;
-//   const start = (page - 1) * pageSize;
-//   const end = start + pageSize;
-//   const tables = filtered.slice(start, end);
-
-//   return {
-//     success: true,
-//     message: "Fetched successfully",
-//     metaData: {
-//       tables,
-//       total,
-//       page,
-//       pageSize,
-//       totalPage: Math.ceil(total / pageSize),
-//     },
-//   };
-// };
 
 export default function TableModule() {
   const [data, setData] = useState<BilliardTable[]>([]);
@@ -128,7 +51,7 @@ export default function TableModule() {
     }
   };
 
-  const { DialogsUpdate, DialogsDelete, columns } = useTableColumns(fetchData);
+  const { Dialogs, columns } = useTableColumns(fetchData);
 
   useEffect(() => {
     fetchData();
@@ -194,8 +117,7 @@ export default function TableModule() {
         pageSize={pageSize}
         onPageChange={setPage}
       />
-      {DialogsUpdate}
-      {DialogsDelete}
+      {Dialogs}
     </div>
   );
 }

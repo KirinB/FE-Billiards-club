@@ -69,7 +69,7 @@ const DashboardSummary = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <SimpleCard
-        title="Tổng số session"
+        title="Tổng số phiên chơi"
         description="Số phiên chơi trong tháng"
         titleType="default"
       >

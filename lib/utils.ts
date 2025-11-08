@@ -27,3 +27,18 @@ export const formatCurrencyVND = (value: number) => {
 export const formatDateVn = (value: string) => {
   return new Date(value).toLocaleDateString("vi-VN");
 };
+
+export function formatHoursPlayed(hours: number) {
+  const totalSeconds = Math.floor(hours * 3600); // giờ -> giây
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  if (h > 0) {
+    return `${h} giờ ${m} phút ${s} giây`;
+  } else if (m > 0) {
+    return `${m} phút ${s} giây`;
+  } else {
+    return `${s} giây`;
+  }
+}

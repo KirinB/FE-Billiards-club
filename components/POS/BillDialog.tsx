@@ -1,6 +1,11 @@
 import { CreateBillResponse } from "@/types/bill.type";
 import { SimpleDialog } from "../custom/SimpleDialog";
 import { Button } from "../ui/button";
+import { formatCurrencyVND, formatHoursPlayed } from "@/lib/utils";
+import Image from "next/image";
+import logo from "@/assets/images/logo.png";
+import QRCode from "react-qr-code";
+import { billConfig } from "@/configs/bill.config";
 
 type BillDialogProps = {
   isOpen: boolean;
@@ -10,29 +15,36 @@ type BillDialogProps = {
 
 const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
   const { bill } = lastBill;
+  console.log({ lastBill });
 
   const handlePrintDemo = () => {
     alert("Demo: In hóa đơn thành công!");
   };
 
   return (
-    <SimpleDialog
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      title={`HÓA ĐƠN BÀN #${bill.sessionId}`}
-    >
+    <SimpleDialog isOpen={isOpen} setIsOpen={setIsOpen} title="Billiards Kirin">
       <div className="font-mono text-sm text-center w-full">
-        <h2 className="font-bold text-lg mb-1">Billiards Kirin</h2>
-        <p>Quận 10, thành phố Hồ Chí Minh</p>
-        <p>ĐT: 0909090909</p>
-        <hr className="my-2 border-dashed" />
+        <div className="space-y-2">
+          <div className="flex w-full justify-center">
+            <Image src={logo} alt="logo" className="w-20" />
+          </div>
+          <p>{billConfig.address}</p>
+          <p>ĐT: {billConfig.phone}</p>
+        </div>
+        <hr className="my-4 border-dashed" />
 
-        <div className="text-left space-y-1">
-          <p>Giờ in: {new Date(bill.createdAt).toLocaleString()}</p>
-          <p>Thời gian chơi: {bill.hoursPlayed.toFixed(2)} giờ</p>
+        <div className="text-left space-y-1 flex justify-between">
+          <div className="text-sm">
+            <p>Giờ in: {new Date(bill.createdAt).toLocaleString()}</p>
+            <p>Thời gian chơi: {formatHoursPlayed(bill.hoursPlayed)}</p>
+          </div>
+          <div className="text-sm">
+            <p>Hóa đơn số: {bill.sessionId}</p>
+            <p>Tiền bàn/giờ: {formatCurrencyVND(bill.pricePerHour)}</p>
+          </div>
         </div>
 
-        <hr className="my-2 border-dashed" />
+        <hr className="my-4 border-dashed" />
 
         <table className="w-full text-left">
           <thead>
@@ -46,7 +58,7 @@ const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
           <tbody>
             {bill.items.map((item) => (
               <tr key={item.id}>
-                <td>{item.menuItem?.name || `Món #${item.menuItem}`}</td>
+                <td>{item.menuItem.name}</td>
                 <td className="text-right">{item.quantity}</td>
                 <td className="text-right">{item.price.toLocaleString()}</td>
                 <td className="text-right">
@@ -57,7 +69,7 @@ const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
           </tbody>
         </table>
 
-        <hr className="my-2 border-dashed" />
+        <hr className="my-4 border-dashed" />
 
         <div className="text-right space-y-1">
           <p>Tiền bàn: {bill.sessionAmount.toLocaleString()}đ</p>
@@ -67,10 +79,15 @@ const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
           </p>
         </div>
 
-        <hr className="my-2 border-dashed" />
-        <p className="text-center text-xs italic mt-2">
-          Xin cảm ơn và hẹn gặp lại!
-        </p>
+        <hr className="my-4 border-dashed mb-4" />
+        <div className="space-y-4">
+          <div className="flex justify-center">
+            <QRCode value="test" size={100} />
+          </div>
+          <p className="text-center text-xs italic mt-2">
+            Xin cảm ơn và hẹn gặp lại!
+          </p>
+        </div>
       </div>
 
       <div className="flex justify-center mt-4">

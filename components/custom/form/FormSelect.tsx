@@ -26,6 +26,7 @@ interface FormSelectProps {
   label?: string;
   placeholder?: string;
   options: Option[];
+  className?: string;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -33,6 +34,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   label,
   placeholder = "Chọn một giá trị",
   options,
+  className,
 }) => {
   const { control } = useFormContext();
 
@@ -41,7 +43,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={className}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Select

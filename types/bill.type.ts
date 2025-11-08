@@ -48,5 +48,6 @@ export interface CreateBillResponse {
     hoursPlayed: number;
     sessionAmount: number;
     totalOrder: number;
+    pricePerHour: number;
   };
 }

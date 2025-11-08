@@ -52,4 +52,10 @@ export const menuItemService = {
     >(API_URL, payload);
     return data.metaData;
   },
+
+  getListWithoutPagination: async () => {
+    const { data } = await privateClient.get(`${API_URL}/all`);
+
+    return data.metaData;
+  },
 };

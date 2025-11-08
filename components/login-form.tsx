@@ -84,7 +84,7 @@ export function LoginForm({
       </div>
 
       <div className="text-sm underline text-right w-full text-gray-500 cursor-pointer">
-        <Link href={"/forgotpassword"}>Forgot password?</Link>
+        <Link href={"/forgot-password"}>Forgot password?</Link>
       </div>
 
       <div className="flex justify-center w-full">
@@ -96,13 +96,6 @@ export function LoginForm({
       {message && (
         <p className="text-red-500 text-center text-sm mt-2">{message}</p>
       )}
-
-      <p className="text-center mt-20 text-gray-500">
-        Not a member?{" "}
-        <span className="underline text-primary transition-colors duration-300 hover:text-purple">
-          <Link href={"/"}>Sign up now</Link>
-        </span>
-      </p>
     </form>
   );
 }

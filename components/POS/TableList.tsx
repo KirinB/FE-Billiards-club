@@ -1,19 +1,18 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { billService } from "@/services/bill.service";
+import { sessionService } from "@/services/session.service";
 import { tableService } from "@/services/tables.service";
 import { BilliardTable } from "@/types/table.type";
-import React, { useEffect, useState } from "react";
-import TableCard from "./TableCard";
-import { SimpleDialog } from "../custom/SimpleDialog";
-import TableDialog from "./TableDialog";
-import { sessionService } from "@/services/session.service";
-import { billService } from "@/services/bill.service";
-import { Session } from "@/types/session.type";
-import { toast } from "sonner";
 import { CreateBillResponse } from "@/types/bill.type";
-import QRCode from "react-qr-code";
+
+import TableCard from "./TableCard";
+import { TableDetailPanel } from "./TableDetailPanel";
 import BillDialog from "./BillDialog";
 
 const TableList = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [tables, setTables] = useState<BilliardTable[]>([]);
   const [selectedTable, setSelectedTable] = useState<BilliardTable | null>(
     null
@@ -21,39 +20,45 @@ const TableList = () => {
   const [lastBill, setLastBill] = useState<CreateBillResponse | null>(null);
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
-  const handleCardClick = (table: BilliardTable) => {
-    setSelectedTable(table);
-    setIsDialogOpen(true);
-  };
-
   const fetchDataTable = async () => {
     try {
       const res = await tableService.getListWithoutPagination();
       setTables(res.tables);
+      // Cập nhật selectedTable nếu bàn đang chọn còn tồn tại
+      if (selectedTable) {
+        const updated =
+          res.tables.find((t) => t.id === selectedTable.id) || null;
+        setSelectedTable(updated);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleCardClick = (table: BilliardTable) => {
+    setSelectedTable(table);
+  };
+
   const handleStartSession = async (table: BilliardTable) => {
     try {
       await sessionService.create({ tableId: table.id });
-      fetchDataTable();
+      await fetchDataTable();
       toast.success("Mở bàn thành công!");
     } catch (error) {
-      toast.error("Có lỗi gì đó !");
       console.log(error);
+      toast.error("Có lỗi gì đó!");
     }
   };
 
   const handleEndSession = async (table: BilliardTable) => {
     try {
       const bill = await billService.create({ tableId: table.id });
-      fetchDataTable();
+      await fetchDataTable();
       setLastBill(bill);
       setIsBillDialogOpen(true);
     } catch (error) {
       console.log(error);
+      toast.error("Kết thúc bàn thất bại!");
     }
   };
 
@@ -62,26 +67,30 @@ const TableList = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-5 gap-10">
-      {tables.map((table) => {
-        return (
-          <TableCard
-            key={table.id}
-            status={table.status}
-            tableName={table.name}
-            onClick={() => handleCardClick(table)}
-          />
-        );
-      })}
-      {selectedTable && (
-        <TableDialog
-          isOpen={isDialogOpen}
-          setIsOpen={setIsDialogOpen}
-          table={selectedTable}
-          onStartSession={() => handleStartSession(selectedTable)}
-          onEndSession={() => handleEndSession(selectedTable)}
-        />
-      )}
+    <div className="flex gap-6">
+      {/* LEFT: Bàn */}
+      <div className="flex-1">
+        <div className="grid grid-cols-4 gap-10">
+          {tables.map((table) => (
+            <TableCard
+              key={table.id}
+              status={table.status}
+              tableName={table.name}
+              onClick={() => handleCardClick(table)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT: chi tiết bàn */}
+      <TableDetailPanel
+        table={selectedTable}
+        onStartSession={() =>
+          selectedTable && handleStartSession(selectedTable)
+        }
+        onEndSession={() => selectedTable && handleEndSession(selectedTable)}
+        onTableUpdate={fetchDataTable} // callback khi gọi món xong
+      />
 
       {lastBill && (
         <BillDialog
