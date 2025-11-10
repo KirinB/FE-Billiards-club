@@ -1,13 +1,9 @@
 "use client";
 
-import * as React from "react";
-
-import logo from "@/assets/images/logo.png";
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
-
 import {
   Sidebar,
   SidebarContent,
@@ -15,40 +11,53 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
 import { NAV_CONFIG } from "@/configs/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/stores";
-import { NavUserSkeleton } from "./nav-user-skeleton";
 import { useIsClient } from "@/hooks/use-is-client";
+import { AppDispatch, RootState } from "@/stores";
+import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NavUserSkeleton } from "./nav-user-skeleton";
+import { fetchStoreInfo } from "@/stores/storeInfoSlice";
 
-// This is data.
-const data = {
-  teams: [
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const storeInfo = useSelector((state: RootState) => state.storeInfo);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const isClient = useIsClient();
+  const dispatch = useDispatch<AppDispatch>();
+
+  React.useEffect(() => {
+    const loadStoreInfo = async () => {
+      try {
+        const result = await dispatch(fetchStoreInfo()).unwrap();
+        console.log("Fetched store info:", result);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadStoreInfo();
+  }, [dispatch]);
+
+  const teams = [
     {
-      name: "Kirin",
-      logo: logo,
+      name: storeInfo.name || "Quán của bạn",
+      logo: storeInfo.logo,
       plan: "Billiards",
     },
-  ],
-  ...NAV_CONFIG,
-};
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const isClient = useIsClient();
-  const { user } = useSelector((state: RootState) => state.auth);
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
-        <NavMain items={data.navMain} />
+        <NavProjects projects={NAV_CONFIG.projects} />
+        <NavMain items={NAV_CONFIG.navMain} />
       </SidebarContent>
       <SidebarFooter>
         {isClient ? (
-          <NavUser user={{ ...user!, avatar: "123.jpg" }} />
+          <NavUser user={{ ...user!, avatar: "" }} />
         ) : (
           <NavUserSkeleton />
         )}

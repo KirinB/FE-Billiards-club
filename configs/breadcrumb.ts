@@ -9,4 +9,6 @@ export const BREADCRUMB_LABELS: Record<string, string> = {
   settings: "Cài đặt",
   pos: "POS",
   orders: "Đơn hàng",
+  bill: "Hóa đơn",
+  setting: "Cài đặt ứng dụng",
 };

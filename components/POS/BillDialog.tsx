@@ -1,11 +1,14 @@
+"use client";
+
 import { CreateBillResponse } from "@/types/bill.type";
 import { SimpleDialog } from "../custom/SimpleDialog";
 import { Button } from "../ui/button";
 import { formatCurrencyVND, formatHoursPlayed } from "@/lib/utils";
 import Image from "next/image";
-import logo from "@/assets/images/logo.png";
+import fallbackLogo from "@/assets/images/logo.png";
 import QRCode from "react-qr-code";
-import { billConfig } from "@/configs/bill.config";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
 
 type BillDialogProps = {
   isOpen: boolean;
@@ -15,22 +18,33 @@ type BillDialogProps = {
 
 const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
   const { bill } = lastBill;
-  console.log({ lastBill });
+  const storeInfo = useSelector((state: RootState) => state.storeInfo);
+  const logo = storeInfo.logo || fallbackLogo;
+  const name = storeInfo.name || "Quán của bạn";
+  const phone = storeInfo.phone || "Chưa có";
+  const address = storeInfo.address || "Chưa có";
 
   const handlePrintDemo = () => {
     alert("Demo: In hóa đơn thành công!");
   };
 
   return (
-    <SimpleDialog isOpen={isOpen} setIsOpen={setIsOpen} title="Billiards Kirin">
+    <SimpleDialog isOpen={isOpen} setIsOpen={setIsOpen} title={name}>
       <div className="font-mono text-sm text-center w-full">
         <div className="space-y-2">
           <div className="flex w-full justify-center">
-            <Image src={logo} alt="logo" className="w-20" />
+            <Image
+              src={logo}
+              alt="logo"
+              width={80}
+              height={80}
+              className="w-20 h-20"
+            />
           </div>
-          <p>{billConfig.address}</p>
-          <p>ĐT: {billConfig.phone}</p>
+          <p>{address}</p>
+          <p>ĐT: {phone}</p>
         </div>
+
         <hr className="my-4 border-dashed" />
 
         <div className="text-left space-y-1 flex justify-between">
@@ -82,7 +96,7 @@ const BillDialog = ({ lastBill, isOpen, setIsOpen }: BillDialogProps) => {
         <hr className="my-4 border-dashed mb-4" />
         <div className="space-y-4">
           <div className="flex justify-center">
-            <QRCode value="test" size={100} />
+            <QRCode value={bill.sessionId.toString()} size={100} />
           </div>
           <p className="text-center text-xs italic mt-2">
             Xin cảm ơn và hẹn gặp lại!

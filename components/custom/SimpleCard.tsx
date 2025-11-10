@@ -13,7 +13,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 const cardVariants = cva("rounded-[12px] shadow-md overflow-hidden", {
   variants: {
     variant: {
-      default: "bg-white text-black",
+      default: "bg-white text-black dark:text-white dark:bg-card",
     },
   },
   defaultVariants: {

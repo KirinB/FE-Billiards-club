@@ -41,8 +41,8 @@ export const NAV_CONFIG = {
     {
       title: "Cài đặt app",
       icon: Settings2,
-      url: "/dashboard/settings",
-      items: [{ title: "Tổng quan", url: "/dashboard/settings" }],
+      url: "/dashboard/setting",
+      items: [{ title: "Tổng quan", url: "/dashboard/setting" }],
     },
   ],
   projects: [

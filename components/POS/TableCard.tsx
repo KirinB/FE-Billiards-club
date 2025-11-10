@@ -9,9 +9,9 @@ type TableCardProps = {
 
 const TableCard = ({ status, tableName, onClick }: TableCardProps) => {
   const statusColor = {
-    AVAILABLE: "bg-green-100",
-    RESERVED: "bg-yellow-100",
-    PLAYING: "bg-red-100",
+    AVAILABLE: "bg-green-100 dark:bg-green-100",
+    RESERVED: "bg-yellow-100 dark:bg-wellow-100",
+    PLAYING: "bg-red-100 dark:bg-red-100",
   }[status];
 
   const statusLabel = {
@@ -33,8 +33,8 @@ const TableCard = ({ status, tableName, onClick }: TableCardProps) => {
       classContent="space-y-2"
       onClick={onClick}
     >
-      <h3 className="text-lg font-bold">{tableName}</h3>
-      <p className="text-sm">{statusLabel}</p>
+      <h3 className="text-lg font-bold dark:text-black">{tableName}</h3>
+      <p className="text-sm dark:text-black">{statusLabel}</p>
     </SimpleCard>
   );
 };

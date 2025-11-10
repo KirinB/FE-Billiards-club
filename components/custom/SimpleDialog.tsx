@@ -45,7 +45,7 @@ export const SimpleDialog = ({
     <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogContent
         className={cn(
-          "inline-flex flex-col items-center justify-center gap-3 bg-white rounded-xl p-6",
+          "inline-flex flex-col items-center justify-center gap-3 rounded-xl p-6",
           className
         )}
       >

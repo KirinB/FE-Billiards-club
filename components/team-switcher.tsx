@@ -1,54 +1,59 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
-
+import Image, { StaticImageData } from "next/image";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import Image, { StaticImageData } from "next/image";
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: StaticImageData;
-    plan: string;
-  }[];
-}) {
-  const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+export type Team = {
+  name: string;
+  logo?: string | StaticImageData | null;
+  plan: string;
+};
 
-  if (!activeTeam) {
-    return null;
-  }
+type TeamSwitcherProps = {
+  teams: Team[];
+  fallbackLogo?: StaticImageData;
+};
+
+export function TeamSwitcher({ teams, fallbackLogo }: TeamSwitcherProps) {
+  // Không dùng useState cố định, lấy team đầu tiên trực tiếp hoặc undefined
+  const activeTeam = teams.length > 0 ? teams[0] : undefined;
+
+  if (!activeTeam) return null;
+
+  const logoToShow =
+    typeof activeTeam.logo === "string"
+      ? activeTeam.logo
+      : activeTeam.logo || fallbackLogo;
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <Image src={activeTeam.logo} alt="logo" />
+            <SidebarMenuButton size="lg">
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square w-8 h-8 items-center justify-center rounded-lg">
+                {logoToShow ? (
+                  <Image
+                    src={logoToShow}
+                    alt={`${activeTeam.name} logo`}
+                    width={32}
+                    height={32}
+                    className="object-cover rounded"
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-gray-300 rounded" />
+                )}
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="ml-2 grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
                 <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
