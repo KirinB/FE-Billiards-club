@@ -39,7 +39,7 @@ const DialogUpdateTable = ({
   });
 
   const handleSubmit = async (data: IUpdateTableSchema) => {
-    console.log(data);
+    // console.log(data);
     try {
       await tableService.update(table.id, data);
       onSuccess();

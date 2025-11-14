@@ -54,7 +54,7 @@ const DialogCreateMenuItem = ({
 
   const handleSubmit = async (data: ICreateMenuItemSchema) => {
     setIsSubmitting(true);
-    console.log(data);
+    // console.log(data);
 
     try {
       await menuItemService.create(data as MenuItemCreatePayload);

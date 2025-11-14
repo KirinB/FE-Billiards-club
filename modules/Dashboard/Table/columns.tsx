@@ -57,7 +57,7 @@ export const useTableColumns = (onSuccess: () => void) => {
             variant = "active";
             text = "Sẵn sàng";
             break;
-          case "OCCUPIED":
+          case "PLAYING":
             variant = "destructive";
             text = "Đang sử dụng";
             break;

@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm, FormProvider, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { FormSelect } from "../custom/form/FormSelect";
-import { FormInput } from "../custom/form/FormInput";
-import { Button } from "../ui/button";
-import { X } from "lucide-react";
 import { menuItemService } from "@/services/menu-item.service";
 import { orderService } from "@/services/order.service";
-import { toast } from "sonner";
 import { MenuItem } from "@/types/menu-item.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { FormCombobox } from "../custom/form/FormCombobox";
+import { FormInput } from "../custom/form/FormInput";
+import { Button } from "../ui/button";
 
 // Schema order
 const createOrderSchema = z.object({
@@ -66,7 +66,7 @@ export const TableOrders = ({ tableId, onSuccess }: Props) => {
       await orderService.create(data);
       toast.success("Gọi món thành công");
       formMethods.reset();
-      await onSuccess(); // fetch lại table/session
+      await onSuccess();
     } catch (error) {
       console.log(error);
       toast.error("Gọi món thất bại");
@@ -81,7 +81,7 @@ export const TableOrders = ({ tableId, onSuccess }: Props) => {
       >
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-4">
-            <FormSelect
+            <FormCombobox
               options={menuItemList}
               name={`items.${index}.menuItemId`}
               label="Món ăn"
@@ -108,6 +108,7 @@ export const TableOrders = ({ tableId, onSuccess }: Props) => {
         <Button
           type="button"
           onClick={() => append({ menuItemId: 0, quantity: 1 })}
+          className="w-full"
         >
           + Thêm món
         </Button>

@@ -35,7 +35,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
   });
 
   const onSubmit = async (data: IResetPasswordSchema) => {
-    console.log(data);
+    // console.log(data);
     const payload = {
       password: data.password,
       token,

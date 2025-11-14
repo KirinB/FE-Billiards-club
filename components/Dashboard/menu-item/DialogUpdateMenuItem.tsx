@@ -56,7 +56,7 @@ const DialogUpdateMenuItem = ({
   });
 
   const handleSubmit = async (data: IUpdateMenuItemSchema) => {
-    console.log(data);
+    // console.log(data);
     try {
       await menuItemService.update(menuItem.id, data as MenuItemUpdatePayload);
       onSuccess();

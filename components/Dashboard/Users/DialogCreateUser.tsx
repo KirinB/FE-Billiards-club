@@ -50,10 +50,10 @@ const DialogCreateUser = ({
 
   const handleSubmit = async (data: ICreateUserSchema) => {
     try {
-      console.log(data);
+      // console.log(data);
       setIsSubmitting(true);
       const res = await userService.create(data);
-      console.log(res.user);
+      // console.log(res.user);
       onSuccess();
       setIsOpen(false);
       formMethods.reset();

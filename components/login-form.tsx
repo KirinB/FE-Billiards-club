@@ -39,7 +39,7 @@ export function LoginForm({
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data);
+    // console.log(data);
     try {
       const { metaData } = await authService.login(data);
       dispatch(setUser(metaData.accessToken));

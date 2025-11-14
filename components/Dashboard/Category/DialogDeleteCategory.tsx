@@ -18,7 +18,7 @@ const DialogDeleteCategory = ({
   const handleSubmit = async () => {
     try {
       const res = await categoryService.delete(category.id);
-      console.log(res.message);
+      // console.log(res.message);
       onSuccess();
       toast.success("Xóa danh mục món thành công!");
     } catch (error) {
