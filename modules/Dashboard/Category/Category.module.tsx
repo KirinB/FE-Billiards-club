@@ -54,7 +54,7 @@ export default function CategoryModule() {
       <h1 className="text-2xl font-semibold">🏷️ Quản lý Danh mục Món ăn</h1>
 
       {/* Toolbar */}
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Tìm kiếm theo tên danh mục..."
@@ -63,7 +63,7 @@ export default function CategoryModule() {
               setSearchInput(e.target.value);
               setPage(1);
             }}
-            className="w-[500px]"
+            className="w-full"
           />
         </div>
 

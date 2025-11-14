@@ -27,7 +27,6 @@ export default function TableModule() {
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState<TableType>("ALL");
   const [isOpenDialogCreate, setIsOpenDialogCreate] = useState<boolean>(false);
-
   const [total, setTotal] = useState(0);
 
   const fetchData = async () => {
@@ -42,7 +41,6 @@ export default function TableModule() {
       });
 
       setData(metaData.tables);
-
       setTotal(metaData.total);
     } catch (error) {
       console.log(error);
@@ -63,9 +61,10 @@ export default function TableModule() {
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">🎱 Quản lý bàn billiards</h1>
 
-      {/* Toolbar */}
-      <div className="flex justify-between">
-        <div className="flex items-center gap-2">
+      {/* 🟩 Responsive Toolbar */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        {/* Left side filter group */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:flex md:flex-row md:items-center">
           <Input
             placeholder="Tìm bàn..."
             value={search}
@@ -73,11 +72,11 @@ export default function TableModule() {
               setPage(1);
               setSearch(e.target.value);
             }}
-            className="w-[200px]"
+            className="w-full sm:w-[200px]"
           />
 
           <Select onValueChange={(v) => setType(v as TableType)} value={type}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-full sm:w-[150px]">
               <SelectValue placeholder="Loại bàn" />
             </SelectTrigger>
             <SelectContent>
@@ -90,18 +89,21 @@ export default function TableModule() {
           <Button
             variant="outline"
             onClick={() => setPriceSort(priceSort === "asc" ? "desc" : "asc")}
+            className="w-full sm:w-auto"
           >
             Sắp xếp giá: {priceSort === "asc" ? "Tăng dần" : "Giảm dần"}
           </Button>
         </div>
+
+        {/* Right side button */}
         <Button
-          variant={"green"}
-          onClick={() => {
-            setIsOpenDialogCreate(true);
-          }}
+          variant="green"
+          className="w-full sm:w-auto"
+          onClick={() => setIsOpenDialogCreate(true)}
         >
           Thêm bàn
         </Button>
+
         <DialogCreateTable
           isOpen={isOpenDialogCreate}
           setIsOpen={setIsOpenDialogCreate}
@@ -117,6 +119,7 @@ export default function TableModule() {
         pageSize={pageSize}
         onPageChange={setPage}
       />
+
       {Dialogs}
     </div>
   );

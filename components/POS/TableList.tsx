@@ -70,7 +70,7 @@ const TableList = () => {
     <div className="flex gap-6">
       {/* LEFT: Bàn */}
       <div className="flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {tables.map((table) => (
             <TableCard
               key={table.id}

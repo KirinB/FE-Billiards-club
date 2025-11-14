@@ -60,7 +60,7 @@ export default function MenuModule() {
       <h1 className="text-2xl font-semibold">🍽️ Quản lý Thực đơn</h1>
 
       {/* Toolbar */}
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Tìm kiếm theo tên Menu..."
@@ -69,7 +69,7 @@ export default function MenuModule() {
               setSearchInput(e.target.value);
               setPage(1);
             }}
-            className="w-[500px]"
+            className="w-full"
           />
         </div>
 

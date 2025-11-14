@@ -1,14 +1,25 @@
-import DialogDeleteBill from "@/components/Dashboard/Bill/DialogDeleteBill";
-import DialogUpdateBill from "@/components/Dashboard/Bill/DialogUpdateBill";
+import BillDialog from "@/components/POS/BillDialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { formatCurrencyVND, formatDateVn } from "@/lib/utils";
-import { Bill } from "@/types/bill.type";
+import { billService } from "@/services/bill.service";
+import { Bill, CreateBillResponse } from "@/types/bill.type";
 import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
-type ActionType = "UPDATE" | "DELETE" | null;
+type ActionType = "VIEW" | null;
 
 export const useBillColumns = (onSuccess: () => void) => {
-  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [selectedBill, setSelectedBill] = useState<CreateBillResponse | null>(
+    null
+  );
   const [openAction, setOpenAction] = useState<ActionType>(null);
 
   const closeDialog = () => {
@@ -37,69 +48,45 @@ export const useBillColumns = (onSuccess: () => void) => {
       header: "Ngày tạo",
       cell: ({ row }) => formatDateVn(row.getValue("createdAt")),
     },
-    // {
-    //   id: "actions",
-    //   header: "Hành động",
-    //   cell: ({ row }) => {
-    //     const bill = row.original;
-    //     return (
-    //       <DropdownMenu>
-    //         <DropdownMenuTrigger asChild>
-    //           <Button variant="ghost" className="h-8 w-8 p-0">
-    //             <span className="sr-only">Open menu</span>
-    //             <MoreHorizontal />
-    //           </Button>
-    //         </DropdownMenuTrigger>
-    //         <DropdownMenuContent align="end">
-    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //           <DropdownMenuItem
-    //             onClick={() => {
-    //               setSelectedBill(bill);
-    //               setOpenAction("UPDATE");
-    //             }}
-    //           >
-    //             Edit bill
-    //           </DropdownMenuItem>
-    //           <DropdownMenuSeparator />
-    //           <DropdownMenuItem
-    //             onClick={() => {
-    //               setSelectedBill(bill);
-    //               setOpenAction("DELETE");
-    //             }}
-    //             className="text-red-500 focus:text-red-600"
-    //           >
-    //             Delete bill
-    //           </DropdownMenuItem>
-    //         </DropdownMenuContent>
-    //       </DropdownMenu>
-    //     );
-    //   },
-    // },
+    {
+      id: "actions",
+      header: "Hành động",
+      cell: ({ row }) => {
+        const bill = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={async () => {
+                  const billDetail = await billService.getDetail(bill.id);
+                  setSelectedBill(billDetail);
+                  setOpenAction("VIEW");
+                }}
+              >
+                View bill
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ];
 
   const Dialogs =
     selectedBill === null ? null : (
       <>
-        <DialogUpdateBill
-          bill={selectedBill}
-          isOpen={openAction === "UPDATE"}
+        <BillDialog
+          lastBill={selectedBill}
+          isOpen={openAction === "VIEW"}
           setIsOpen={(open) => {
             if (!open) closeDialog();
-          }}
-          onSuccess={() => {
-            closeDialog();
-            onSuccess();
-          }}
-        />
-        <DialogDeleteBill
-          bill={selectedBill}
-          isOpen={openAction === "DELETE"}
-          setIsOpen={(open) => {
-            if (!open) closeDialog();
-          }}
-          onSuccess={() => {
-            closeDialog();
-            onSuccess();
           }}
         />
       </>

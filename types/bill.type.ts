@@ -51,3 +51,5 @@ export interface CreateBillResponse {
     pricePerHour: number;
   };
 }
+
+export interface GetBillDetail extends CreateBillResponse {}

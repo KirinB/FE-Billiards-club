@@ -3,6 +3,7 @@ import {
   Bill,
   CreateBillPayload,
   CreateBillResponse,
+  GetBillDetail,
   IPayloadUpdateBill,
   ParamsGetListBill,
   ResponseGetListBill,
@@ -20,8 +21,8 @@ export const billService = {
     return data.metaData;
   },
 
-  getDetail: async (id: number): Promise<Bill> => {
-    const { data } = await privateClient.get<ApiResponse<Bill>>(
+  getDetail: async (id: number): Promise<GetBillDetail> => {
+    const { data } = await privateClient.get<ApiResponse<GetBillDetail>>(
       `${API_URL}/${id}`
     );
     return data.metaData;

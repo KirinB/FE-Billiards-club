@@ -55,7 +55,7 @@ export const TableDetailPanel = ({
 
   if (!table) {
     return (
-      <div className="flex justify-center items-center w-1/2 md:w-[400px] border-l h-screen text-gray-400">
+      <div className="flex justify-center items-center w-1/2 md:w-1/3 lg:w-1/4 border-l h-screen text-gray-400">
         Chọn một bàn để xem chi tiết
       </div>
     );
@@ -64,7 +64,7 @@ export const TableDetailPanel = ({
   const isPlaying = table.status === "PLAYING";
 
   return (
-    <div className="border-l p-6 h-screen overflow-y-auto w-1/2 md:w-[400px]">
+    <div className="border-l p-6 h-screen overflow-y-auto w-1/2 md:w-1/3 lg:w-1/4">
       {loading ? (
         <div className="flex justify-center items-center h-full">
           <Spinner />
