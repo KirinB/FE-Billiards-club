@@ -55,7 +55,7 @@ export const TableDetailPanel = ({
 
   if (!table) {
     return (
-      <div className="flex justify-center items-center w-[400px] border-l h-screen text-gray-400">
+      <div className="flex justify-center items-center w-1/2 md:w-[400px] border-l h-screen text-gray-400">
         Chọn một bàn để xem chi tiết
       </div>
     );
