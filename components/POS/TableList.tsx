@@ -75,9 +75,9 @@ const TableList = () => {
     }
   };
 
-  const handleEndSession = async (table: BilliardTable) => {
+  const handleEndSession = async (table: BilliardTable, phone: string) => {
     try {
-      const bill = await billService.create({ tableId: table.id });
+      const bill = await billService.create({ tableId: table.id, phone });
       await fetchDataTables();
       await updateSelectedTable(table.id);
       setLastBill(bill);
@@ -114,8 +114,10 @@ const TableList = () => {
         onStartSession={() =>
           selectedTable && handleStartSession(selectedTable)
         }
-        onEndSession={() => selectedTable && handleEndSession(selectedTable)}
-        onTableUpdate={handleTableUpdate} // callback khi gọi món xong
+        onEndSession={(phone: string) =>
+          selectedTable && handleEndSession(selectedTable, phone)
+        }
+        onTableUpdate={handleTableUpdate}
       />
 
       {lastBill && (

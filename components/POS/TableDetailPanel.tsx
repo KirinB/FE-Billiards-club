@@ -7,11 +7,12 @@ import { Button } from "../ui/button";
 import { TableOrders } from "./TableOrders";
 import { BilliardTable } from "@/types/table.type";
 import { formatCurrencyVND } from "@/lib/utils";
+import { AskPhoneDialog } from "./AskPhoneDialog";
 
 type Props = {
   table: BilliardTable | null;
   onStartSession?: () => void;
-  onEndSession?: () => void;
+  onEndSession?: (phone: string) => void;
   onTableUpdate: () => Promise<void>;
 };
 
@@ -24,6 +25,14 @@ export const TableDetailPanel = ({
   const [duration, setDuration] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "orders">("info");
+  const [askPhoneOpen, setAskPhoneOpen] = useState(false);
+  const [selectedTableForEnd, setSelectedTableForEnd] =
+    useState<BilliardTable | null>(null);
+
+  const handleConfirmPhone = async (phone: string) => {
+    if (!onEndSession) return;
+    onEndSession(phone);
+  };
 
   useEffect(() => {
     setActiveTab("info");
@@ -119,9 +128,15 @@ export const TableDetailPanel = ({
                 </div>
               )}
               <Button
-                className="w-full mt-6"
+                className="w-full mt-6 cursor-pointer"
                 variant={isPlaying ? "destructive" : "green"}
-                onClick={isPlaying ? onEndSession : onStartSession}
+                onClick={() => {
+                  if (isPlaying) {
+                    setAskPhoneOpen(true);
+                  } else {
+                    onStartSession?.();
+                  }
+                }}
               >
                 {isPlaying ? "Kết thúc giờ chơi" : "Bắt đầu giờ chơi"}
               </Button>
@@ -133,6 +148,11 @@ export const TableDetailPanel = ({
               </TabsContent>
             )}
           </Tabs>
+          <AskPhoneDialog
+            isOpen={askPhoneOpen}
+            setIsOpen={setAskPhoneOpen}
+            onConfirmPhone={handleConfirmPhone}
+          />
         </>
       )}
     </div>
