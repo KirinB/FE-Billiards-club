@@ -41,6 +41,7 @@ export interface IPayloadUpdateBill {
 
 export interface CreateBillPayload {
   tableId: number;
+  phone: string;
 }
 
 export interface CreateBillResponse {

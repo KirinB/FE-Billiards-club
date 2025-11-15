@@ -20,29 +20,54 @@ const TableList = () => {
   const [lastBill, setLastBill] = useState<CreateBillResponse | null>(null);
   const [isBillDialogOpen, setIsBillDialogOpen] = useState(false);
 
-  const fetchDataTable = async () => {
+  const fetchDataTables = async () => {
     try {
       const res = await tableService.getListWithoutPagination();
       setTables(res.tables);
-      // Cập nhật selectedTable nếu bàn đang chọn còn tồn tại
-      if (selectedTable) {
-        const updated =
-          res.tables.find((t) => t.id === selectedTable.id) || null;
-        setSelectedTable(updated);
-      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleCardClick = (table: BilliardTable) => {
-    setSelectedTable(table);
+  const handleTableUpdate = async () => {
+    await fetchDataTables(); // update danh sách bàn
+    if (selectedTable) {
+      try {
+        const res = await tableService.getWithId(selectedTable.id);
+        setSelectedTable(res.table); // cập nhật selectedTable
+      } catch (error) {
+        console.log(error);
+        toast.error("Cập nhật thông tin bàn thất bại");
+      }
+    }
+  };
+
+  const updateSelectedTable = async (tableId: number) => {
+    try {
+      const res = await tableService.getWithId(tableId);
+      setSelectedTable(res.table);
+    } catch (error) {
+      console.log(error);
+      toast.error("Cập nhật thông tin bàn thất bại");
+    }
+  };
+
+  const handleCardClick = async (table: BilliardTable) => {
+    try {
+      const res = await tableService.getWithId(table.id);
+      setSelectedTable(res.table);
+      // console.log(res.table);
+    } catch (error) {
+      console.log(error);
+      toast.error("Lấy thông tin bàn thất bại");
+    }
   };
 
   const handleStartSession = async (table: BilliardTable) => {
     try {
       await sessionService.create({ tableId: table.id });
-      await fetchDataTable();
+      await fetchDataTables();
+      await updateSelectedTable(table.id);
       toast.success("Mở bàn thành công!");
     } catch (error) {
       console.log(error);
@@ -50,10 +75,11 @@ const TableList = () => {
     }
   };
 
-  const handleEndSession = async (table: BilliardTable) => {
+  const handleEndSession = async (table: BilliardTable, phone: string) => {
     try {
-      const bill = await billService.create({ tableId: table.id });
-      await fetchDataTable();
+      const bill = await billService.create({ tableId: table.id, phone });
+      await fetchDataTables();
+      await updateSelectedTable(table.id);
       setLastBill(bill);
       setIsBillDialogOpen(true);
     } catch (error) {
@@ -63,7 +89,7 @@ const TableList = () => {
   };
 
   useEffect(() => {
-    fetchDataTable();
+    fetchDataTables();
   }, []);
 
   return (
@@ -88,8 +114,10 @@ const TableList = () => {
         onStartSession={() =>
           selectedTable && handleStartSession(selectedTable)
         }
-        onEndSession={() => selectedTable && handleEndSession(selectedTable)}
-        onTableUpdate={fetchDataTable} // callback khi gọi món xong
+        onEndSession={(phone: string) =>
+          selectedTable && handleEndSession(selectedTable, phone)
+        }
+        onTableUpdate={handleTableUpdate}
       />
 
       {lastBill && (

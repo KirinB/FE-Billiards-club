@@ -6,6 +6,7 @@ import {
   Columns3,
   LayoutDashboardIcon,
   Receipt,
+  UserCheck2Icon,
 } from "lucide-react";
 
 export const NAV_CONFIG = {
@@ -39,10 +40,22 @@ export const NAV_CONFIG = {
       items: [{ title: "Quản lý hóa đơn", url: "/dashboard/bill" }],
     },
     {
-      title: "Cài đặt app",
+      title: "Thành viên",
+      icon: UserCheck2Icon,
+      url: "/dashboard/member",
+      items: [
+        { title: "Quản lý thành viên", url: "/dashboard/member" },
+        { title: "Quản lý điểm", url: "/dashboard/point" },
+      ],
+    },
+    {
+      title: "Cài đặt",
       icon: Settings2,
       url: "/dashboard/setting",
-      items: [{ title: "Tổng quan", url: "/dashboard/setting" }],
+      items: [
+        { title: "Cài đặt app", url: "/dashboard/setting/app" },
+        { title: "Cài đặt quán", url: "/dashboard/setting/store" },
+      ],
     },
   ],
   projects: [

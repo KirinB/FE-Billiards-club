@@ -41,7 +41,7 @@ const DialogCreateTable = ({
   const handleSubmit = async (data: ICreateTableSchema) => {
     try {
       const res = await tableService.create(data);
-      console.log(res.table);
+      // console.log(res.table);
       onSuccess();
       setIsOpen(false);
       formMethods.reset();

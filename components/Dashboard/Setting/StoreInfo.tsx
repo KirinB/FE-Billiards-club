@@ -15,18 +15,23 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as z from "zod";
 
-// ---------- Zod schema ----------
 const storeInfoSchema = z.object({
   name: z.string().min(1, "Tên quán không được để trống"),
   address: z.string().min(1, "Địa chỉ không được để trống"),
   phone: z.string().min(1, "Số điện thoại không được để trống"),
   vat: z.number().min(0, "VAT phải >= 0"),
+  pointRate: z.number().min(1, "Số tiền / 1 điểm phải >= 1"),
   logo: z.string().url().optional(),
+  levelConfig: z.object({
+    BRONZE: z.number().min(0),
+    SILVER: z.number().min(0),
+    GOLD: z.number().min(0),
+    DIAMOND: z.number().min(0),
+  }),
 });
 
 type StoreInfoForm = z.infer<typeof storeInfoSchema>;
 
-// ---------- Component ----------
 export default function StoreInfoSettings() {
   const dispatch = useDispatch<AppDispatch>();
   const storeInfo = useSelector((state: RootState) => state.storeInfo);
@@ -38,7 +43,14 @@ export default function StoreInfoSettings() {
       address: storeInfo.address ?? "",
       phone: storeInfo.phone ?? "",
       vat: storeInfo.vat ?? 0,
+      pointRate: storeInfo.pointRate ?? 10000,
       logo: storeInfo.logo ?? "",
+      levelConfig: storeInfo.levelConfig ?? {
+        BRONZE: 0,
+        SILVER: 800,
+        GOLD: 2000,
+        DIAMOND: 5000,
+      },
     },
   });
 
@@ -55,14 +67,20 @@ export default function StoreInfoSettings() {
       address: storeInfo.address ?? "",
       phone: storeInfo.phone ?? "",
       vat: storeInfo.vat ?? 0,
+      pointRate: storeInfo.pointRate ?? 10000,
       logo: storeInfo.logo ?? "",
+      levelConfig: storeInfo.levelConfig ?? {
+        BRONZE: 0,
+        SILVER: 800,
+        GOLD: 2000,
+        DIAMOND: 5000,
+      },
     });
   }, [storeInfo, reset]);
 
   const onSubmit = async (data: StoreInfoForm) => {
     let finalLogo = data.logo;
 
-    // Nếu logo là file local (Blob URL) -> upload Cloudinary
     if (watchedLogo && watchedLogo.startsWith("blob:")) {
       const fileInput =
         document.querySelector<HTMLInputElement>('input[type="file"]');
@@ -85,7 +103,6 @@ export default function StoreInfoSettings() {
     }
 
     const finalData = { ...data, logo: finalLogo };
-
     await dispatch(updateStoreInfo(finalData));
     dispatch(setLocalStoreInfo(finalData));
   };
@@ -111,12 +128,31 @@ export default function StoreInfoSettings() {
             placeholder="Số điện thoại"
           />
           <FormInput label="VAT (%)" type="number" name="vat" />
+          <FormInput
+            label="Số tiền để được 1 điểm (VNĐ)"
+            type="number"
+            name="pointRate"
+            placeholder="VD: 10000"
+          />
 
           <FormUploadInput
             label="Logo quán"
             name="logo"
             fallback={storeInfo.logo ?? undefined}
           />
+
+          {/* ---------- Level Config Inputs ---------- */}
+          {Object.entries(formMethods.getValues("levelConfig")).map(
+            ([level, value]) => (
+              <FormInput
+                key={level}
+                label={`Điểm mở cấp ${level}`}
+                name={`levelConfig.${level}` as any} // workaround cho nested field
+                type="number"
+                placeholder="Nhập số điểm"
+              />
+            )
+          )}
 
           <div className="flex gap-2 col-span-2 justify-end">
             <Button type="submit" disabled={storeInfo.status === "loading"}>

@@ -41,3 +41,7 @@ export interface ResponseUpdateTable {
 export type TablesWithoutPaginationResponse = {
   tables: BilliardTable[];
 };
+
+export type ResponseGetTableById = {
+  table: BilliardTable;
+};

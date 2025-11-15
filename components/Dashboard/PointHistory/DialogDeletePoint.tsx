@@ -1,26 +1,27 @@
+"use client";
+
 import { SimpleDialog } from "@/components/custom/SimpleDialog";
-import { categoryService } from "@/services/category.service";
+import { pointHistoryService } from "@/services/pointHistory.service";
 import { ApiErrorResponse } from "@/types/api.type";
-import { Category } from "@/types/category.type";
+import { PointHistory } from "@/types/pointHistory.type";
 import { toast } from "sonner";
 
-const DialogDeleteCategory = ({
+const DialogDeletePoint = ({
   isOpen,
   setIsOpen,
   onSuccess,
-  category,
+  point,
 }: {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: (open: boolean) => void;
   onSuccess: () => void;
-  category: Category;
+  point: PointHistory;
 }) => {
   const handleSubmit = async () => {
     try {
-      const res = await categoryService.delete(category.id);
-      // console.log(res.message);
+      await pointHistoryService.delete(point.id);
+      toast.success("Xóa điểm thành công!");
       onSuccess();
-      toast.success("Xóa danh mục món thành công!");
     } catch (error) {
       const err = error as ApiErrorResponse;
       toast.error(err.message);
@@ -36,10 +37,10 @@ const DialogDeleteCategory = ({
       classNameTitle="w-full"
       onConfirm={handleSubmit}
     >
-      Việc xóa <strong>{category.name}</strong> sẽ xóa vĩnh viễn tất cả dữ liệu
-      liên quan. Bạn có muốn tiếp tục không?
+      Việc xóa <strong>{point.id}</strong> sẽ xóa vĩnh viễn dữ liệu điểm này.
+      Bạn có muốn tiếp tục không?
     </SimpleDialog>
   );
 };
 
-export default DialogDeleteCategory;
+export default DialogDeletePoint;

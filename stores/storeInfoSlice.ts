@@ -10,6 +10,8 @@ export interface StoreInfoData {
   phone: string;
   logo?: string | null;
   vat?: number | null;
+  pointRate?: number | null;
+  levelConfig?: Record<"BRONZE" | "SILVER" | "GOLD" | "DIAMOND", number>;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -25,6 +27,8 @@ const initialState: StoreInfoState = {
   phone: billConfig.phone,
   logo: null,
   vat: null,
+  pointRate: 10000,
+  levelConfig: { BRONZE: 0, SILVER: 800, GOLD: 2000, DIAMOND: 5000 },
   status: "idle",
   error: null,
 };

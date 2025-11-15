@@ -6,12 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
 import { TableOrders } from "./TableOrders";
 import { BilliardTable } from "@/types/table.type";
+import { formatCurrencyVND } from "@/lib/utils";
+import { AskPhoneDialog } from "./AskPhoneDialog";
 
 type Props = {
   table: BilliardTable | null;
   onStartSession?: () => void;
-  onEndSession?: () => void;
-  onTableUpdate: () => Promise<void>; // callback để fetch lại table
+  onEndSession?: (phone: string) => void;
+  onTableUpdate: () => Promise<void>;
 };
 
 export const TableDetailPanel = ({
@@ -23,6 +25,14 @@ export const TableDetailPanel = ({
   const [duration, setDuration] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "orders">("info");
+  const [askPhoneOpen, setAskPhoneOpen] = useState(false);
+  const [selectedTableForEnd, setSelectedTableForEnd] =
+    useState<BilliardTable | null>(null);
+
+  const handleConfirmPhone = async (phone: string) => {
+    if (!onEndSession) return;
+    onEndSession(phone);
+  };
 
   useEffect(() => {
     setActiveTab("info");
@@ -62,6 +72,7 @@ export const TableDetailPanel = ({
   }
 
   const isPlaying = table.status === "PLAYING";
+  const orders = table.currentSession?.orders ?? [];
 
   return (
     <div className="border-l p-6 h-screen overflow-y-auto w-1/2 md:w-1/3 lg:w-1/4">
@@ -93,16 +104,39 @@ export const TableDetailPanel = ({
               {/* Playing */}
               {isPlaying && table.currentSession && (
                 <div className="text-sm space-y-1 mb-4">
-                  <p>Thời gian chơi: {duration}</p>
-                  <p>
-                    Số order đã gọi: {table.currentSession?._count?.orders ?? 0}
-                  </p>
+                  <p className="font-bold">Thời gian chơi: {duration}</p>
+                  {orders.length === 0 ? (
+                    <p className="text-gray-500">Chưa có order nào</p>
+                  ) : (
+                    <div className="space-y-4">
+                      <p className="font-bold">Danh sách món đã gọi</p>
+                      {orders.map((order, idx) => (
+                        <div
+                          key={idx}
+                          className="border p-2 rounded bg-gray-50 dark:bg-gray-800 text-sm"
+                        >
+                          {order.orderItems.map((item, i) => (
+                            <p key={i}>
+                              {item.menuItem.name} -{" "}
+                              {formatCurrencyVND(item.menuItem.price)}
+                            </p>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
               <Button
-                className="w-full mt-6"
+                className="w-full mt-6 cursor-pointer"
                 variant={isPlaying ? "destructive" : "green"}
-                onClick={isPlaying ? onEndSession : onStartSession}
+                onClick={() => {
+                  if (isPlaying) {
+                    setAskPhoneOpen(true);
+                  } else {
+                    onStartSession?.();
+                  }
+                }}
               >
                 {isPlaying ? "Kết thúc giờ chơi" : "Bắt đầu giờ chơi"}
               </Button>
@@ -114,6 +148,11 @@ export const TableDetailPanel = ({
               </TabsContent>
             )}
           </Tabs>
+          <AskPhoneDialog
+            isOpen={askPhoneOpen}
+            setIsOpen={setAskPhoneOpen}
+            onConfirmPhone={handleConfirmPhone}
+          />
         </>
       )}
     </div>

@@ -19,7 +19,7 @@ const DialogDeleteMenu = ({
   const handleSubmit = async () => {
     try {
       const res = await menuService.delete(menu.id);
-      console.log(res.message);
+      // console.log(res.message);
       onSuccess();
       toast.success("Xóa thực đơn thành công!");
     } catch (error) {

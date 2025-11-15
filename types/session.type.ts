@@ -1,3 +1,5 @@
+import { Order } from "./order.type";
+
 export interface CreateSessionPayload {
   tableId: number;
 }
@@ -16,4 +18,5 @@ export type Session = {
   _count?: {
     orders: number;
   };
+  orders: Order[];
 };

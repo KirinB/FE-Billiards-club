@@ -3,6 +3,7 @@ import {
   PayloadUpdateTable,
   ResponseCreateTable,
   ResponseGetTable,
+  ResponseGetTableById,
   ResponseUpdateTable,
   TablesWithoutPaginationResponse,
   TableType,
@@ -72,4 +73,11 @@ export const tableService = {
       >(`${API_URL}/all`);
       return data.metaData;
     },
+
+  getWithId: async (id: number): Promise<ResponseGetTableById> => {
+    const { data } = await privateClient.get<ApiResponse<ResponseGetTableById>>(
+      `${API_URL}/${id}`
+    );
+    return data.metaData;
+  },
 };
